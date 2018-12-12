@@ -1,1 +1,4 @@
-# binary_trees
+# BINARY TREES
+
+## INITIAL THOUGHTS
+
