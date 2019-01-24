@@ -22,53 +22,71 @@ class Node
 		@tmp = @tmp.child_right
 	end
 
+	def up
+		@tmp = @tmp.parent
+	end
+
 	def build_tree(array)
+		if array.size == 2
+			left = Node.new(array[0])
+			right = Node.new(array[1])
+			right.child_left = left
+			left.parent = right
+			puts "LEFT:#{left.value} RIGHT:#{right.value}"
+			return right
+		end
+		return left = Node.new(array[0]) if array.size == 1
 		return array[0] if array.size == 1
 
 		mid = (array.length/2)
 		@root.nil? ? (@root = Node.new(array[mid]); @tmp = @root): ""
 
-		right = build_tree(array.slice!(mid, array.size-1))
-		left = build_tree(array)
-
-		# right = build_tree(array.slice!(0, mid))
+		# right = build_tree(array.slice!(mid, array.size-1))
 		# left = build_tree(array)
+
+		left = build_tree(array.slice!(0, mid))
+		right = build_tree(array)
 
 		# right = array.slice!(0, mid)
 		# left = array
 
-		left.class == Integer ? left = Node.new(left) : ""
-		right.class == Integer ? right = Node.new(right) : ""
+		# left.class == Integer ? left = Node.new(left) : ""
+		# right.class == Integer ? right = Node.new(right) : ""
 
-		print "LEFT:#{left.value} RIGHT:#{right.value}\n\n"
+		print "ROOT:#{root.value} "
+		print "LEFT:#{left.value} C_LEFT:#{left.child_left.nil?} C_RIGHT:#{left.child_right.nil?}\n" 
+		print "RIGHT:#{right.value} C_LEFT:#{right.child_left.nil?} C_RIGHT:#{right.child_right.nil?}\n\n"
+		# print "RIGHT:#{right}"
 
-		if left.value == right.value
-
-
-		elsif left.value < right.value
-			puts "RIGHT GREATER"
-			# right.child_right = left
-			# left.parent = right
-
-			right.child_right = left
-			left.parent = right
-
-			# rooter
-			# place_node(right)
-		elsif left.value > right.value
-			puts "LEFT GREATER"
-			# right.child_left = left
-			# left.parent = right
-			right.child_left = left
-			left.parent = right
-			# rooter
-			# place_node(right)
+		if @root.value == right.value
+			print "ROOT EQUAL TO RIGHT"
+			@root.child_left = left
+			@root.child_right = right.child_right 
+			left.parent = @root
+			right.child_right.parent = @root
+			return @root
+		elsif !left.child_right.nil?
+			print "NOT NIL "
+			# left = left.child_right
+			@tmp = left
+			until @tmp.child_right.nil?
+				@tmp = @tmp.child_right
+			end
+			@tmp.child_right = right
+			# @tmp = @tmp.parent until @tmp.parent.nil?
+			until @tmp.parent.nil?
+				@tmp = @tmp.parent
+			end
+			right.parent = left
+			@root = @tmp
+		elsif left.child_right.nil?
+			print "CHILD RIGHT IS NIL"
+			left.child_right = right
+			right.parent = left
+			# @root = right
 		end
 
-		
-		# build_tree(right)
-		# build_tree(left)
-		# puts "RIGHT:#{right} VALUE:#{right.value} C_LEFT:#{right.child_left} C_RIGHT:#{right.child_right}"
+	
 
 		left
 		# rooter
@@ -138,15 +156,10 @@ class Node
 		# rooter
 		until @tmp.child_right.nil? 
 			print "NODE: #{@tmp.value} "
-			print "CHILD_LEFT: #{@tmp.child_left.nil? ? "" : @tmp.child_left.value}"
-			print "CHILD_RIGHT #{@tmp.child_right.nil? ? "" : @tmp.child_right.value}"
-			if !@tmp.child_left.nil?
-				@tmp = @tmp.child_left
-				display_tree
-			elsif !@tmp.child_right.nil?
-				@tmp = @tmp.child_right
-				display_tree
-			end
+			print "CHILD_LEFT: #{@tmp.child_left.nil? ? "" : @tmp.child_left.value} "
+			print "CHILD_RIGHT #{@tmp.child_right.nil? ? "" : @tmp.child_right.value}\n"
+			right
+			display_tree
 		end 
 	end
 
