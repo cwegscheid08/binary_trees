@@ -136,7 +136,46 @@ class Node
 
 	end
 
-	def depth_first_search
+	def depth_first_search(search_value, node = @root, stack = [])
+
+		if !node.nil?
+			stack.unshift(node.child_right)
+			stack.unshift(node.child_left)
+		end
+
+		if node.nil? && stack.size >= 1
+			depth_first_search(search_value, stack.shift, stack)
+		elsif node.nil? && stack.size == 0
+			puts "NODE #{search_value} NOT FOUND"
+			return nil
+		elsif search_value == node.value
+			puts "NODE #{node.value} FOUND"
+			return node
+		elsif stack.nil?
+			puts "NODE #{search_value} NOT FOUND"
+			return nil
+		else
+			depth_first_search(search_value, stack.shift, stack)
+		end
+
+	end
+
+	def dfs_rec(search_value, node = @root)
+		return node if !node.nil?
+
+		# if !@node.nil?
+			node = dfs_rec(search_value, node.child_left)
+			node = dfs_rec(search_value, node.child_right)
+		# end
+
+		if node.value == search_value
+			puts "NODE #{node.value} FOUND"	
+			return node
+		else
+			puts "NODE NOT FOUND"
+		end
+
+		# return node
 
 	end
 
