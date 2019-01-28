@@ -3,10 +3,6 @@ class Node
 
 	def initialize(value = nil, parent = nil, child_left = nil, child_right = nil)
 		@value = value
-		# @root = nil
-		# @parent = nil
-		# @child_left = nil
-		# @child_right = nil
 	end
 
 	def rooter
@@ -38,11 +34,6 @@ class Node
 		left = build_tree(array.slice!(0, mid))
 		right = build_tree(array.slice(1, array.size-1))
 		
-		
-		# left = build_tree(left)
-		# right = build_tree(right)
-		
-
 		if !left.value.nil?
 			if left.value != base.value && left.value < base.value
 				left.parent = base
@@ -72,7 +63,7 @@ class Node
 
 	def build_tree_unsorted(array)
 		@root = Node.new(array.shift)
-		print "ROOT:#{@root.value}\n\n"
+
 		until array.size == 0
 			rooter
 			place_node(Node.new(array.shift))
@@ -80,7 +71,7 @@ class Node
 	end
 
 	def place_node(node)
-		print "NODE:#{node.value} \n"
+		
 		if node.value == @tmp.value
 			return node
 		elsif node.value < @tmp.value && @tmp.child_left.nil?
@@ -161,21 +152,20 @@ class Node
 	end
 
 	def dfs_rec(search_value, node = @root)
-		return node if !node.nil?
-
-		# if !@node.nil?
-			node = dfs_rec(search_value, node.child_left)
-			node = dfs_rec(search_value, node.child_right)
-		# end
-
+		if node.nil?
+			puts "NODE #{search_value} NOT FOUND"
+			return nil
+		end
 		if node.value == search_value
-			puts "NODE #{node.value} FOUND"	
+			puts "NODE #{search_value} FOUND"
 			return node
-		else
-			puts "NODE NOT FOUND"
 		end
 
-		# return node
+		if search_value < node.value
+			dfs_rec(search_value, node.child_left)
+		elsif search_value > node.value
+			dfs_rec(search_value, node.child_right)
+		end
 
 	end
 
