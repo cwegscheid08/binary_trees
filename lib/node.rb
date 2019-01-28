@@ -35,22 +35,33 @@ class Node
 		mid = (array.length/2)
 		base = Node.new(array[mid])
 
-		left = array.slice!(0, mid)
-		right = array.slice(1, array.size-1)
+		left = build_tree(array.slice!(0, mid))
+		right = build_tree(array.slice(1, array.size-1))
 		
 		
-		left = build_tree(left)
-		right = build_tree(right)
+		# left = build_tree(left)
+		# right = build_tree(right)
 		
 
-		if left.value != base.value
-			left.parent = base
-			base.child_left = left
+		if !left.value.nil?
+			if left.value != base.value && left.value < base.value
+				left.parent = base
+				base.child_left = left
+			elsif left.value != base.value && left.value > base.value
+				left.parent = base
+				base.child_right = left
+			end
 		end
 
-		if right.value != base.value
-			right.parent = base
-			base.child_right = right
+
+		if !right.value.nil?
+			if right.value != base.value && right.value > base.value
+				right.parent = base
+				base.child_right = right
+			elsif left.value != base.value && right.value < base.value
+				right.parent = base
+				base.child_left = right
+			end
 		end
 
 		@root = base
@@ -59,7 +70,75 @@ class Node
 
 	end
 
+	def build_tree_unsorted(array)
+		@root = Node.new(array.shift)
+		print "ROOT:#{@root.value}\n\n"
+		until array.size == 0
+			rooter
+			place_node(Node.new(array.shift))
+		end
+	end
 
+	def place_node(node)
+		print "NODE:#{node.value} \n"
+		if node.value == @tmp.value
+			return node
+		elsif node.value < @tmp.value && @tmp.child_left.nil?
+			@tmp.child_left = node
+			node.parent = @tmp
+			loop do 
+				break if @tmp.parent.nil?
+				up
+			end
+			@root.child_left = @tmp.child_left
+		elsif node.value > @tmp.value && @tmp.child_right.nil?
+			@tmp.child_right = node
+			node.parent = @tmp
+			loop do
+				break if @tmp.parent.nil?
+				up
+			end
+			@root.child_right = @tmp.child_right
+			
+		elsif node.value < @tmp.value && !@tmp.child_left.nil?
+			left
+			place_node(node)
+		elsif node.value > @tmp.value && !@tmp.child_right.nil?
+			right
+			place_node(node)
+		else
+			print "\n\nERROR\n\n"
+		end
+			
+	end
+
+	def breath_first_search(search_value, node = @root, queue = [])
+
+		if !node.nil?
+			queue.push(node.child_left)
+			queue.push(node.child_right)
+		end
+
+		if node.nil? && queue.size >= 1
+			breath_first_search(search_value, queue.shift, queue)
+		elsif node.nil? && queue.size == 0
+			puts "NODE #{search_value} NOT FOUND"
+			return nil
+		elsif search_value == node.value
+			puts "NODE #{node.value} FOUND"
+			return node
+		elsif queue.nil?
+			puts "NODE #{search_value} NOT FOUND"
+			return nil
+		else
+			breath_first_search(search_value, queue.shift, queue)
+		end
+
+	end
+
+	def depth_first_search
+
+	end
 
 	def display_branch
 		print "LEFT:#{@tmp.child_left.nil? ? "" : @tmp.child_left.value} "
@@ -79,17 +158,3 @@ class Node
 	end
 end
 
-
-node = Node.new
-
-array = [1,7,4,23,8,9,4,3,5,7,9,67,6345,324]
-array.sort!
-node.build_tree(array)
-# node.display_tree
-
-array = []
-30.times { |x| array.push(rand(30))}
-array.sort!
-node.build_tree(array)
-node.rooter
-node.display_tree
